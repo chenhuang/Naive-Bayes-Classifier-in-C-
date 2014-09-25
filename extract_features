@@ -1,0 +1,3 @@
+#! /bin/bash
+src/preprocess.pl $1 $2 $3
+lib/extract_features.o $3.train.tmp $3.test.tmp vocabulary $3 $4 $5

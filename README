@@ -1,0 +1,41 @@
+This is the readme for Navie Bayes Classifier with Chi-square feature selection.
+
+INSTALL:
+    To install, please run ./install.
+
+FEATURE EXTRACTION:
+    You could run ./extract_features to build feature vectors from labeled documents:
+
+    Usage: ./extract_features train_dir test_dir output [M feature_file]
+        -train_dir – Path to documents in the training set.
+        -test_dir – Path to documents in the testing set.
+        -output – You should produce labeled feature vectors in output.train and output.test for
+        the training and test sets, respectively.
+        - M– (optional) number of features to use for chi-square feature selection.
+        - feature_file– (optional) When feature selection is used, there is also another
+        parameter, feature_file. You should output the chi-square scores for all words to this
+        file (e.g., each line should have: word <tab> score).
+
+    OUTPUT: 
+        output.train: training set represented by feature vectors.
+        output.test: testing set represented by feature vectors.
+        vocabulary: mapping between words and their internal representations in the code
+        feature_file: in the format of "feature_name chi-square_value". It includes all the features used and their chi-square value in the class.
+
+    NOTE: ./extract_features essentially calls two scripts: src/preprocess.pl and lib/extract_features.o, you can also run them seperately to save some processing time, as explained below:
+    ./preprocess.pl will read in the train document set and test document test, then build intermediate training feature vector and testing feature vector called "output.train.tmp" and "output.test.tmp". Those two files are feature vector representation of the training document set and testing document set with all features included and they follow SVM light input format. You can directly use them to do NB/SVM learning and classifying. If you wanted to do top M feature extraction using Chi-square, you could try ./extract_features.o. ./extract_features.o is used to do chi-square feature extraction in which you could specify the number of features you wanted to extract. ./extract_features.o accepts *.train.tmp and *.test.tmp as input instead of the document set. The reason of using a seperate ./extract_feature.o is to facilitate the runtime speed of feature extraction, as you can specify the number of features you want to extract without re-read the whole training document set.
+    You can find further instructions of using ./preprocess.pl and ./extract_features.o by calling them without any arguments.
+
+LEARN:
+    You could run ./learn to learn the Naive Bayes model, below is the usage: 
+    Usage: ./learn examples.train model_file
+	-examples.train: trained set represented by feature vector, in SVM_light format
+	-model_file: NB model learned
+    E.g.: ./learn 10newsgroup.train model
+
+CLASSIFY:
+   You could run ./classify to classify test documents:
+   Usage: ./classify.o examples.test model_file output_file
+             -examples.test: test file
+             -model_file: model file
+             -output_file: test results, in the format of "docid MAP_value predicted_class real_class y|n".
